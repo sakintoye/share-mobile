@@ -33,7 +33,7 @@ class StripeAPIClient: NSObject, STPBackendAPIAdapter {
         return error
     }
     
-    func completeCharge(result: STPPaymentResult, amount: Int, completion: STPErrorBlock) {
+    func completeCharge(result: STPToken, amount: Double, recipient_id: Int, completion: STPErrorBlock) {
         guard let baseURLString = baseURLString, baseURL = NSURL(string: baseURLString) else {
             let error = NSError(domain: StripeDomain, code: 50, userInfo: [
                 NSLocalizedDescriptionKey: "Please set baseURLString to your backend URL in CheckoutViewController.swift"
@@ -48,11 +48,12 @@ class StripeAPIClient: NSObject, STPBackendAPIAdapter {
             completion(error)
             return
         }
-        let path = "charge"
+        let path = "\(backendURI)/charge_card"
         let url = baseURL.URLByAppendingPathComponent(path)
         let params: [String: AnyObject] = [
-            "stripe_token": result.source.stripeID,
-            "amount": amount,
+            "stripe_token": result.stripeID,
+            "amount": amount * 100,
+            "recipient_id": recipient_id,
             "customer_id": customerID
         ]
         let request = NSURLRequest.request(url, method: .POST, params: params)
