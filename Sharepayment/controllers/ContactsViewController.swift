@@ -57,8 +57,6 @@ class ContactsViewController: UITableViewController, ResourceObserver {
         }
         self.refreshControl?.endRefreshing()
     }
-
-    
     
     func showMembers(_:UIBarButtonItem) {
         let vc = storyboard?.instantiateViewControllerWithIdentifier("addMembersViewController") as! AddMembersViewController
@@ -86,7 +84,8 @@ class ContactsViewController: UITableViewController, ResourceObserver {
         self.tableView.cellForRowAtIndexPath(indexPath)?.setSelected(false, animated: true)
         let vc = storyboard?.instantiateViewControllerWithIdentifier("newTransferViewController") as! NewTransferViewController
         vc.recipient = contactsList[indexPath.row]
-        self.presentViewController(vc, animated: true, completion: nil)
+        let nc = UINavigationController(rootViewController: vc)
+        self.presentViewController(nc, animated: true, completion: nil)
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

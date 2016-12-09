@@ -17,6 +17,7 @@ class SignUpViewController: UIViewController {
     @IBOutlet weak var confirm_password: UITextField!
     @IBOutlet weak var signUpBtn: UIButton!
     @IBOutlet weak var errorText: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.errorText.text = ""
@@ -28,8 +29,8 @@ class SignUpViewController: UIViewController {
         view.addGestureRecognizer(tap)
         self.name.text = "Sunkanmi Akintoye"
         self.email.text = "777"
-        self.password.text = "333"
-        self.confirm_password.text = "333"
+        self.password.text = "00000000"
+        self.confirm_password.text = "00000000"
     }
 
     @IBAction func closeBtnAction(sender: AnyObject) {
@@ -55,14 +56,16 @@ class SignUpViewController: UIViewController {
                     SPAPI.authToken = authToken
                     
                     SPAPI.resource("stripe/customer")
-                    .request(.POST, json: ["fullname": "\(user.name!)", "email": "\(user.email!)"])
+                    .request(.POST, json: ["fullname": "\(user.name!)", "email": "\(user.email!)", "uid": "\(user.email)"])
                     .onSuccess({ (data) in
                         let user = data.content as! JSON
                         let vc = self.storyboard?.instantiateViewControllerWithIdentifier("stripeAddCardViewController") as! StripeAddCardViewController
                         vc.customerID = user["id"].stringValue
                         let nc = UINavigationController(rootViewController: vc)
                         self.presentViewController(nc, animated: true, completion: nil)
-
+                    })
+                    .onFailure({ (error) in
+                        print(error)
                     })
                     
                     

@@ -9,6 +9,7 @@
 import UIKit
 import Siesta
 import SwiftyJSON
+import ZAlertView
 
 class AddMembersViewController: UITableViewController, ResourceObserver {
 
@@ -69,9 +70,11 @@ class AddMembersViewController: UITableViewController, ResourceObserver {
         SPAPI.contact
         .request(.POST, json: contact)
         .onSuccess { (data) in
+            self.showSuccessAlert()
             self.dismissViewControllerAnimated(true, completion: nil)
         }
         .onFailure { (error) in
+            self.showErrorAlert("Action unsuccessful", message: "Could not complete the operation")
             print("Error while trying to add member")
             print(error)
         }
@@ -80,6 +83,24 @@ class AddMembersViewController: UITableViewController, ResourceObserver {
     
     func handleRefresh(refreshControl: UIRefreshControl) {
         membersResource = SPAPI.member
+    }
+    
+    func showSuccessAlert() {
+        ZAlertView(title: "Successful", message: "You added a contact!", closeButtonText: "Close") { (view) in
+            view.dismiss()
+            self.dismissViewControllerAnimated(true, completion: nil)
+            }
+            .show()
+    }
+    
+    func showErrorAlert(title: String, message: String) {
+        
+        let alert = ZAlertView(title: title, message: message, closeButtonText: "Close") { (view) in
+            view.dismiss()
+        }
+        alert.alertType = ZAlertView.AlertType.Alert
+        alert.show()
+        
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

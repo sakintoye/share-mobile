@@ -7,6 +7,9 @@
 //
 
 import UIKit
+import Stripe
+import ZAlertView
+//import PopupDialog
 
 class NewTransferViewController: UIViewController {
     
@@ -18,6 +21,7 @@ class NewTransferViewController: UIViewController {
     @IBOutlet weak var actionBtn: UIButton!
     @IBOutlet weak var cancelBtn: UIButton!
     
+    var paymentContext: STPPaymentContext?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,17 +32,102 @@ class NewTransferViewController: UIViewController {
             name.text = recipient.name
         }
         name.textColor = AppTheme.highlightText
-        // Do any additional setup after loading the view.
+        
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.DismissKeyboard))
+        view.addGestureRecognizer(tap)
+        
+        //self.paymentContext.pushPaymentMethodsViewController()
     }
-
-    @IBAction func cancelBtnAction(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    
+    @IBAction func makeTransferBtn(sender: AnyObject) {
+        let id = "card_19E0dBL8zrCITgxE2w0GrqxD"
+        let brand = STPCardBrand.Visa
+        let last4 = "4242"
+        let funding = STPCardFundingType.Credit
+        let card = STPCard(ID: id, brand: brand, last4: last4, expMonth: 2, expYear: 2017, funding: funding)
+        
+        card.number = "4242424242424242"
+        Stripe.createTokenWithCard(card) { (token, error) in
+            if let error = error {
+                // show the error to the user
+                print(error)
+            } else if let token = token {
+                self.startAnimation()
+                let stripeClient = StripeAPIClient()
+                stripeClient.customerID = "cus_9X4mPfNerDvEaJ"
+                stripeClient.completeCharge(token, amount: Double(self.amount.text!)!, recipient_id: self.recipient!.id!, completion: { (error) in
+                    if error == nil {
+                        SPAPI.payment
+                        .request(.POST, json: ["payment": ["recipient_id": self.recipient!.id!, "amount": self.amount.text!, "reason": "Testing"] ])
+                        .onSuccess({ (data) in
+                            self.showSuccessAlert()
+                        })
+                        .onFailure({ (data) in
+                            self.showErrorAlert("Failed", message: "Could not submit payment. \n Please try again")
+                        })
+                    }
+                    else {
+                        self.showErrorAlert("Failed", message: "Could not charge account")
+                    }
+                })
+            }
+        }
     }
+    
+    func showSuccessAlert() {
+        ZAlertView(title: "Successful", message: "Paymnet was successful", closeButtonText: "Close") { (view) in
+            view.dismiss()
+            self.dismissViewControllerAnimated(true, completion: nil)
+        }
+        .show()
+    }
+    
+    func showErrorAlert(title: String, message: String) {
+        
+        let alert = ZAlertView(title: title, message: message, closeButtonText: "Close") { (view) in
+            view.dismiss()
+            }
+        alert.alertType = ZAlertView.AlertType.Alert
+        alert.show()
+        
+    }
+    
+    func startAnimation() {
+        // MARK: -
+        let view      = UIView(frame: CGRect(x: 0, y: 0, width: 320, height: 568))
+        let indicator = MaterialLoadingIndicator(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        indicator.center = CGPoint(x: 320*0.5, y: 568*0.5)
+        view.addSubview(indicator)
+        indicator.startAnimating()
+    }
+    
+    func confirmDismiss() {
+        var refreshAlert = UIAlertController(title: "Cancel Payment", message: "Are you sure you want to cancel this payment?", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
+            self.dismissViewControllerAnimated(true, completion: nil)
+        }))
+        
+        refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { (action: UIAlertAction!) in
+            
+        }))
+        
+        presentViewController(refreshAlert, animated: true, completion: nil)
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
+    func DismissKeyboard(){
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
+    }
+    
+    @IBAction func cancelTransferBtnAction(sender: AnyObject) {
+        self.confirmDismiss()
+    }
 
     /*
     // MARK: - Navigation

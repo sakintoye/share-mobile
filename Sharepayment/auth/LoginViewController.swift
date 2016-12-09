@@ -28,7 +28,8 @@ class LoginViewController: UIViewController, ResourceObserver {
         self.emailText.text = "sakintoye2015@my.fit.edu"
         self.passwordText.text = "00000000"
         self.signInBtn.makeGreen()
-        
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.DismissKeyboard))
+        view.addGestureRecognizer(tap)
         
     }
     @IBAction func loginBtnAction(sender: AnyObject) {
@@ -113,6 +114,10 @@ class LoginViewController: UIViewController, ResourceObserver {
         // Dispose of any resources that can be recreated.
     }
     
+    func DismissKeyboard(){
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
+    }
 
     /*
     // MARK: - Navigation

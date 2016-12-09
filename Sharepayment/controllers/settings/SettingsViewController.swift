@@ -89,7 +89,7 @@ class SettingsViewController: UITableViewController {
         self.title = "Settings"
         
         sections.append(SettingSection(title: "My Profile", items: profileSection, description: ""))
-        sections.append(SettingSection(title: "Teams", items: teamsSection, description: "Invite team members and control access"))
+//        sections.append(SettingSection(title: "Invitations", items: teamsSection, description: "Invite team members and control access"))
         sections.append(SettingSection(title: "My Cards", items: cardSection, description: "Manage your cards"))
         
         sections.append(SettingSection(title: "About \(AppConfig.name)", items: aboutSection, description: ""))

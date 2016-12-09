@@ -54,7 +54,6 @@ class StripeAddCardViewController: UIViewController, STPAddCardViewControllerDel
         let addCardViewController = STPAddCardViewController()
         addCardViewController.delegate = self
         
-        
         let paymentContext = STPPaymentContext(APIAdapter: StripeAPIClient.sharedClient)
         let userInformation = STPUserInformation()
         paymentContext.prefilledInformation = userInformation
