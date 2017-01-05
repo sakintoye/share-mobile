@@ -9,7 +9,7 @@ class MaterialLoadingIndicator: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = UIColor.clearColor()
+        backgroundColor = UIColor.clear
         initShapeLayer()
     }
     
@@ -22,9 +22,9 @@ class MaterialLoadingIndicator: UIView {
                                     "strokeStart" : NSNull(),
                                     "transform" : NSNull(),
                                     "strokeColor" : NSNull()]
-        circleShapeLayer.backgroundColor = UIColor.clearColor().CGColor
-        circleShapeLayer.strokeColor     = UIColor.blueColor().CGColor
-        circleShapeLayer.fillColor       = UIColor.clearColor().CGColor
+        circleShapeLayer.backgroundColor = UIColor.clear.cgColor
+        circleShapeLayer.strokeColor     = UIColor.blue.cgColor
+        circleShapeLayer.fillColor       = UIColor.clear.cgColor
         circleShapeLayer.lineWidth       = 5
         circleShapeLayer.lineCap         = kCALineCapRound
         circleShapeLayer.strokeStart     = 0
@@ -35,42 +35,42 @@ class MaterialLoadingIndicator: UIView {
                                                         radius: center.x,
                                                         startAngle: 0,
                                                         endAngle: CGFloat(M_PI*2),
-                                                        clockwise: true).CGPath
+                                                        clockwise: true).cgPath
         layer.addSublayer(circleShapeLayer)
     }
     
     func startAnimating() {
-        if layer.animationForKey("rotation") == nil {
+        if layer.animation(forKey: "rotation") == nil {
             startColorAnimation()
             startStrokeAnimation()
             startRotatingAnimation()
         }
     }
     
-    private func startColorAnimation() {
+    fileprivate func startColorAnimation() {
         let color      = CAKeyframeAnimation(keyPath: "strokeColor")
         color.duration = 10.0
-        color.values   = [UIColor(hex: 0x4285F4, alpha: 1.0, duration: 2).CGColor,
-                          UIColor(hex: 0xDE3E35, alpha: 1.0, duration: 2).CGColor,
-                          UIColor(hex: 0xF7C223, alpha: 1.0, duration: 2).CGColor,
-                          UIColor(hex: 0x1B9A59, alpha: 1.0, duration: 2).CGColor,
-                          UIColor(hex: 0x4285F4, alpha: 1.0, duration: 2).CGColor]
+        color.values   = [UIColor(hex: 0x4285F4, alpha: 1.0, duration: 2).cgColor,
+                          UIColor(hex: 0xDE3E35, alpha: 1.0, duration: 2).cgColor,
+                          UIColor(hex: 0xF7C223, alpha: 1.0, duration: 2).cgColor,
+                          UIColor(hex: 0x1B9A59, alpha: 1.0, duration: 2).cgColor,
+                          UIColor(hex: 0x4285F4, alpha: 1.0, duration: 2).cgColor]
         color.calculationMode = kCAAnimationPaced
         color.repeatCount     = Float.infinity
-        circleShapeLayer.addAnimation(color, forKey: "color")
+        circleShapeLayer.add(color, forKey: "color")
     }
     
-    private func startRotatingAnimation() {
+    fileprivate func startRotatingAnimation() {
         let rotation            = CABasicAnimation(keyPath: "transform.rotation.z")
         rotation.toValue        = M_PI*2
         rotation.duration       = 2.2
-        rotation.cumulative     = true
-        rotation.additive       = true
+        rotation.isCumulative     = true
+        rotation.isAdditive       = true
         rotation.repeatCount    = Float.infinity
-        layer.addAnimation(rotation, forKey: "rotation")
+        layer.add(rotation, forKey: "rotation")
     }
     
-    private func startStrokeAnimation() {
+    fileprivate func startStrokeAnimation() {
         let easeInOutSineTimingFunc = CAMediaTimingFunction(controlPoints: 0.39, 0.575, 0.565, 1.0)
         let progress: CGFloat     = MaxStrokeLength
         let endFromValue: CGFloat = circleShapeLayer.strokeEnd
@@ -82,7 +82,7 @@ class MaterialLoadingIndicator: UIView {
         strokeEnd.fillMode              = kCAFillModeForwards
         strokeEnd.timingFunction        = easeInOutSineTimingFunc
         strokeEnd.beginTime             = 0.1
-        strokeEnd.removedOnCompletion   = false
+        strokeEnd.isRemovedOnCompletion   = false
         let startFromValue: CGFloat     = circleShapeLayer.strokeStart
         let startToValue: CGFloat       = fabs(endToValue - MinStrokeLength)
         let strokeStart                 = CABasicAnimation(keyPath: "strokeStart")
@@ -92,21 +92,21 @@ class MaterialLoadingIndicator: UIView {
         strokeStart.fillMode            = kCAFillModeForwards
         strokeStart.timingFunction      = easeInOutSineTimingFunc
         strokeStart.beginTime           = strokeEnd.beginTime + strokeEnd.duration + 0.2
-        strokeStart.removedOnCompletion = false
+        strokeStart.isRemovedOnCompletion = false
         let pathAnim                 = CAAnimationGroup()
         pathAnim.animations          = [strokeEnd, strokeStart]
         pathAnim.duration            = strokeStart.beginTime + strokeStart.duration
         pathAnim.fillMode            = kCAFillModeForwards
-        pathAnim.removedOnCompletion = false
+        pathAnim.isRemovedOnCompletion = false
         CATransaction.begin()
         CATransaction.setCompletionBlock {
-            if self.circleShapeLayer.animationForKey("stroke") != nil {
+            if self.circleShapeLayer.animation(forKey: "stroke") != nil {
                 self.circleShapeLayer.transform = CATransform3DRotate(self.circleShapeLayer.transform, CGFloat(M_PI*2) * progress, 0, 0, 1)
-                self.circleShapeLayer.removeAnimationForKey("stroke")
+                self.circleShapeLayer.removeAnimation(forKey: "stroke")
                 self.startStrokeAnimation()
             }
         }
-        circleShapeLayer.addAnimation(pathAnim, forKey: "stroke")
+        circleShapeLayer.add(pathAnim, forKey: "stroke")
         CATransaction.commit()
     }
     

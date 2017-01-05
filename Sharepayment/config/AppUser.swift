@@ -9,7 +9,7 @@
 import Foundation
 class AppUser {
     
-    static func createDefaults (user: User, authToken: AuthToken) {
+    static func createDefaults (_ user: User, authToken: AuthToken) {
         //Set NSUserDefaults values
         Defaults["Access-Token"] = authToken.accessToken
         Defaults["Client"] = authToken.client

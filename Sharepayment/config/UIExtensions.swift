@@ -22,10 +22,10 @@ extension UIButton {
         self.design("#ff0000", textColor: "#ffffff")
     }
     
-    private func design(backgroundColor: String, textColor: String) {
+    fileprivate func design(_ backgroundColor: String, textColor: String) {
         self.backgroundColor = UIColor(hexString: backgroundColor)
         self.tintColor = UIColor(hexString: textColor)
-        self.layer.borderColor = UIColor(hexString: backgroundColor)?.CGColor
+        self.layer.borderColor = UIColor(hexString: backgroundColor)?.cgColor
         self.layer.borderWidth = 2
         self.layer.cornerRadius = 5
         self.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 110)

@@ -18,8 +18,8 @@ class AddMembersViewController: UITableViewController, ResourceObserver {
 
         membersResource = SPAPI.member
         
-        self.refreshControl?.addTarget(self, action: #selector(self.handleRefresh(_:)), forControlEvents: UIControlEvents.ValueChanged)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Close", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.closeView(_:)))
+        self.refreshControl?.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControlEvents.valueChanged)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Close", style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.closeView(_:)))
     }
 
     override func didReceiveMemoryWarning() {
@@ -49,7 +49,7 @@ class AddMembersViewController: UITableViewController, ResourceObserver {
         }
     }
     
-    func resourceChanged(resource: Resource, event: ResourceEvent) {
+    func resourceChanged(_ resource: Resource, event: ResourceEvent) {
         if let members = membersResource?.typedContent() as [User]? {
             membersList = members
         }
@@ -59,19 +59,19 @@ class AddMembersViewController: UITableViewController, ResourceObserver {
         self.refreshControl?.endRefreshing()
     }
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let member = self.membersList[indexPath.row]
         let contact = ["contact": ["contact_id": member.id!]]  as NSDictionary
         SPAPI.contact
         .request(.POST, json: contact)
         .onSuccess { (data) in
             self.showSuccessAlert()
-            self.dismissViewControllerAnimated(true, completion: nil)
+            self.dismiss(animated: true, completion: nil)
         }
         .onFailure { (error) in
             self.showErrorAlert("Action unsuccessful", message: "Could not complete the operation")
@@ -81,36 +81,36 @@ class AddMembersViewController: UITableViewController, ResourceObserver {
 
     }
     
-    func handleRefresh(refreshControl: UIRefreshControl) {
+    func handleRefresh(_ refreshControl: UIRefreshControl) {
         membersResource = SPAPI.member
     }
     
     func showSuccessAlert() {
         ZAlertView(title: "Successful", message: "You added a contact!", closeButtonText: "Close") { (view) in
             view.dismiss()
-            self.dismissViewControllerAnimated(true, completion: nil)
+            self.dismiss(animated: true, completion: nil)
             }
             .show()
     }
     
-    func showErrorAlert(title: String, message: String) {
+    func showErrorAlert(_ title: String, message: String) {
         
         let alert = ZAlertView(title: title, message: message, closeButtonText: "Close") { (view) in
             view.dismiss()
         }
-        alert.alertType = ZAlertView.AlertType.Alert
+        alert.alertType = ZAlertView.AlertType.alert
         alert.show()
         
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return membersList.count
     }
     
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cellInfo", forIndexPath: indexPath) as! AddMemberCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cellInfo", for: indexPath) as! AddMemberCell
         let contact = membersList[indexPath.row]
         cell.name.text = contact.name
         cell.email.text = contact.email
@@ -119,7 +119,7 @@ class AddMembersViewController: UITableViewController, ResourceObserver {
     }
     
     func closeView(_:UIBarButtonItem) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
 

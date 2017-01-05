@@ -22,14 +22,14 @@ class StripeAddCardViewController: UIViewController, STPAddCardViewControllerDel
     
     // MARK: STPAddCardViewControllerDelegate
     
-    func addCardViewControllerDidCancel(addCardViewController: STPAddCardViewController) {
-        self.navigationController?.popViewControllerAnimated(true)
+    func addCardViewControllerDidCancel(_ addCardViewController: STPAddCardViewController) {
+        self.navigationController?.popViewController(animated: true)
     }
     
-    func addCardViewController(addCardViewController: STPAddCardViewController, didCreateToken token: STPToken, completion: STPErrorBlock) {
+    func addCardViewController(_ addCardViewController: STPAddCardViewController, didCreateToken token: STPToken, completion: @escaping STPErrorBlock) {
         let stripeAdapter = StripeAPIClient()
         stripeAdapter.customerID = self.customerID! //"cus_90mxjcaQV6yGeJ"
-        stripeAdapter.attachSourceToCustomer(token) { (error: NSError?) in
+        stripeAdapter.attachSource(toCustomer: token) { (error: NSError?) in
             if let _ = error {
                 completion(error)
                 //Error
@@ -39,7 +39,7 @@ class StripeAddCardViewController: UIViewController, STPAddCardViewControllerDel
             }
         }
     }
-    @IBAction func addCardAction(sender: AnyObject) {
+    @IBAction func addCardAction(_ sender: AnyObject) {
         self.showStripeCardView()
     }
     
@@ -49,12 +49,12 @@ class StripeAddCardViewController: UIViewController, STPAddCardViewControllerDel
     }
     
     func showStripeCardView() {
-        STPPaymentConfiguration.sharedConfiguration().smsAutofillDisabled = true
+        STPPaymentConfiguration.shared().smsAutofillDisabled = true
         
         let addCardViewController = STPAddCardViewController()
         addCardViewController.delegate = self
         
-        let paymentContext = STPPaymentContext(APIAdapter: StripeAPIClient.sharedClient)
+        let paymentContext = STPPaymentContext(apiAdapter: StripeAPIClient.sharedClient)
         let userInformation = STPUserInformation()
         paymentContext.prefilledInformation = userInformation
         
@@ -64,9 +64,9 @@ class StripeAddCardViewController: UIViewController, STPAddCardViewControllerDel
     }
     
     func closeViewController() {
-        let vc = storyboard?.instantiateViewControllerWithIdentifier("userTab")
+        let vc = storyboard?.instantiateViewController(withIdentifier: "userTab")
 //        let nc = UINavigationController(rootViewController: vc!)
-        self.presentViewController(vc!, animated: true, completion: nil)
+        self.present(vc!, animated: true, completion: nil)
     }
     
     

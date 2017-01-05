@@ -33,7 +33,7 @@ class TransfersViewController: UITableViewController, ResourceObserver {
         }
     }
     
-    func resourceChanged(resource: Resource, event: ResourceEvent) {
+    func resourceChanged(_ resource: Resource, event: ResourceEvent) {
         if let payments = transfersResource?.typedContent() as [Payment]? {
             transfersList = payments
         }
@@ -50,10 +50,10 @@ class TransfersViewController: UITableViewController, ResourceObserver {
         transfersResource = SPAPI.payment
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         
-        self.refreshControl?.addTarget(self, action: #selector(self.handleRefresh(_:)), forControlEvents: UIControlEvents.ValueChanged)
+        self.refreshControl?.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControlEvents.valueChanged)
     }
     
-    func handleRefresh(refreshControl: UIRefreshControl) {
+    func handleRefresh(_ refreshControl: UIRefreshControl) {
         transfersResource = SPAPI.payment
     }
     
@@ -64,26 +64,26 @@ class TransfersViewController: UITableViewController, ResourceObserver {
     
     // MARK: - Table view data source
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        self.tableView.cellForRowAtIndexPath(indexPath)?.setSelected(false, animated: true)
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.tableView.cellForRow(at: indexPath)?.setSelected(false, animated: true)
 //        let vc = storyboard?.instantiateViewControllerWithIdentifier("newTransferViewController") as! NewTransferViewController
 //        vc.recipient = transfersList[indexPath.row]
 //        self.presentViewController(vc, animated: true, completion: nil)
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return transfersList.count
     }
     
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TransfersCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TransfersCell
         let payment = transfersList[indexPath.row]
         cell.name.text = payment.person
         cell.amount.text = payment.amount

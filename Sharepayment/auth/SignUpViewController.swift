@@ -33,11 +33,11 @@ class SignUpViewController: UIViewController {
         self.confirm_password.text = "00000000"
     }
 
-    @IBAction func closeBtnAction(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func closeBtnAction(_ sender: AnyObject) {
+        self.dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func signUpAction(sender: AnyObject) {
+    @IBAction func signUpAction(_ sender: AnyObject) {
         if self.email.text != "" && self.name.text != "" {
             if self.password.text != "" && self.password.text == self.confirm_password.text {
                 SPAPI.signUp(self.name.text!, email: self.email.text!, password: self.password.text!, confirm_password: self.confirm_password.text!)
@@ -59,10 +59,10 @@ class SignUpViewController: UIViewController {
                     .request(.POST, json: ["fullname": "\(user.name!)", "email": "\(user.email!)", "uid": "\(user.email)"])
                     .onSuccess({ (data) in
                         let user = data.content as! JSON
-                        let vc = self.storyboard?.instantiateViewControllerWithIdentifier("stripeAddCardViewController") as! StripeAddCardViewController
+                        let vc = self.storyboard?.instantiateViewController(withIdentifier: "stripeAddCardViewController") as! StripeAddCardViewController
                         vc.customerID = user["id"].stringValue
                         let nc = UINavigationController(rootViewController: vc)
-                        self.presentViewController(nc, animated: true, completion: nil)
+                        self.present(nc, animated: true, completion: nil)
                     })
                     .onFailure({ (error) in
                         print(error)
@@ -77,9 +77,9 @@ class SignUpViewController: UIViewController {
                         message = errors.firstObject as! String
                     }
 
-                    let errorAlert = UIAlertController(title: "Error", message: message, preferredStyle: UIAlertControllerStyle.Alert)
-                    errorAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
-                    self.presentViewController(errorAlert, animated: true, completion: nil)
+                    let errorAlert = UIAlertController(title: "Error", message: message, preferredStyle: UIAlertControllerStyle.alert)
+                    errorAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                    self.present(errorAlert, animated: true, completion: nil)
                 })
             }
             else {

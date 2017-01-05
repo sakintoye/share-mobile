@@ -32,7 +32,7 @@ class LoginViewController: UIViewController, ResourceObserver {
         view.addGestureRecognizer(tap)
         
     }
-    @IBAction func loginBtnAction(sender: AnyObject) {
+    @IBAction func loginBtnAction(_ sender: AnyObject) {
         
         self.login()
     }
@@ -77,25 +77,25 @@ class LoginViewController: UIViewController, ResourceObserver {
         }
     }
     
-    func resourceChanged(resource: Resource, event: ResourceEvent) {
+    func resourceChanged(_ resource: Resource, event: ResourceEvent) {
         // The convenience .jsonDict accessor returns empty dict if no
         // data, so the same code can both populate and clear fields.
         //let json = resource.jsonDict
         showHomeTab(userResource?.typedContent())
     }
     
-    func showHomeTab(user: User?) {
+    func showHomeTab(_ user: User?) {
         if let userInfo = user {
-            let vc = storyboard?.instantiateViewControllerWithIdentifier("userTab")
-            self.presentViewController(vc!, animated: true, completion: nil)
+            let vc = storyboard?.instantiateViewController(withIdentifier: "userTab")
+            self.present(vc!, animated: true, completion: nil)
         }
         else {
             print("Not available")
         }
     }
-    @IBAction func signUpBtnAction(sender: AnyObject) {
-        let vc = storyboard?.instantiateViewControllerWithIdentifier("signUpViewController") as? SignUpViewController
-        self.presentViewController(vc!, animated: true, completion: nil)
+    @IBAction func signUpBtnAction(_ sender: AnyObject) {
+        let vc = storyboard?.instantiateViewController(withIdentifier: "signUpViewController") as? SignUpViewController
+        self.present(vc!, animated: true, completion: nil)
         
 //        let vc = self.storyboard?.instantiateViewControllerWithIdentifier("stripeAddCardViewController") as! StripeAddCardViewController
 //        let nc = UINavigationController(rootViewController: vc)

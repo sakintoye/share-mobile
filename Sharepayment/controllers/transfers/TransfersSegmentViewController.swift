@@ -25,17 +25,17 @@ class TransfersSegmentViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
-    @IBAction func segmentAction(sender: AnyObject) {
+    @IBAction func segmentAction(_ sender: AnyObject) {
         self.currentViewController!.view.removeFromSuperview()
         self.currentViewController!.removeFromParentViewController()
         print("Changing view")
         displayCurrentTab(sender.selectedSegmentIndex)
     }
     
-    func displayCurrentTab(tabIndex: Int){
+    func displayCurrentTab(_ tabIndex: Int){
         if let vc = viewControllerForSelectedSegmentIndex(tabIndex) {
             self.addChildViewController(vc)
-            vc.didMoveToParentViewController(self)
+            vc.didMove(toParentViewController: self)
             vc.view.frame = self.controllersHolder.bounds
             self.controllersHolder.addSubview(vc.view)
             self.currentViewController = vc
@@ -43,19 +43,19 @@ class TransfersSegmentViewController: UIViewController {
         }
     }
     
-    func viewControllerForSelectedSegmentIndex(index: Int) -> UIViewController? {
+    func viewControllerForSelectedSegmentIndex(_ index: Int) -> UIViewController? {
         switch index {
         case 0:
             self.title = "Sent"
             if inboundSegmentVC == nil {
-                inboundSegmentVC = storyboard?.instantiateViewControllerWithIdentifier("transfersViewController") as? TransfersViewController
+                inboundSegmentVC = storyboard?.instantiateViewController(withIdentifier: "transfersViewController") as? TransfersViewController
             }
             inboundSegmentVC!.direction = TransferDirection.outbound
             return inboundSegmentVC
         case 1:
             self.title = "Received"
             if outboundSegmentVC == nil {
-                outboundSegmentVC = storyboard?.instantiateViewControllerWithIdentifier("transfersViewController") as? TransfersViewController
+                outboundSegmentVC = storyboard?.instantiateViewController(withIdentifier: "transfersViewController") as? TransfersViewController
             }
             outboundSegmentVC!.direction = TransferDirection.inbound
             return inboundSegmentVC

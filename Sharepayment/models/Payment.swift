@@ -27,7 +27,7 @@ class Payment {
         reason = json["reason"].stringValue
         status = json["status"].stringValue
         date_sent = json["date_sent"].stringValue
-        person = json["name"].stringValue.capitalizedString
+        person = json["name"].stringValue.capitalized
     }
     
     func dateSent() -> String {
@@ -35,18 +35,18 @@ class Payment {
         return payment_date
     }
     
-    func convertToShortDate(dateStr: String) -> String {
+    func convertToShortDate(_ dateStr: String) -> String {
         if dateStr == "" {
             return ""
         }
         // Set date format
-        let dateFmt = NSDateFormatter()
-        dateFmt.timeZone = NSTimeZone.defaultTimeZone()
+        let dateFmt = DateFormatter()
+        dateFmt.timeZone = TimeZone.current
         dateFmt.dateFormat =  "yyyy-MM-dd"
         
         // Get NSDate for the given string
-        let date = dateFmt.dateFromString(dateStr)
-        return dateFmt.stringFromDate(date!)
+        let date = dateFmt.date(from: dateStr)
+        return dateFmt.string(from: date!)
     }
     
     

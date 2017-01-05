@@ -39,15 +39,15 @@ class NewTransferViewController: UIViewController {
         //self.paymentContext.pushPaymentMethodsViewController()
     }
     
-    @IBAction func makeTransferBtn(sender: AnyObject) {
+    @IBAction func makeTransferBtn(_ sender: AnyObject) {
         let id = "card_19E0dBL8zrCITgxE2w0GrqxD"
-        let brand = STPCardBrand.Visa
+        let brand = STPCardBrand.visa
         let last4 = "4242"
-        let funding = STPCardFundingType.Credit
-        let card = STPCard(ID: id, brand: brand, last4: last4, expMonth: 2, expYear: 2017, funding: funding)
+        let funding = STPCardFundingType.credit
+        let card = STPCard(id: id, brand: brand, last4: last4, expMonth: 2, expYear: 2017, funding: funding)
         
         card.number = "4242424242424242"
-        Stripe.createTokenWithCard(card) { (token, error) in
+        Stripe.createToken(with: card) { (token, error) in
             if let error = error {
                 // show the error to the user
                 print(error)
@@ -77,17 +77,17 @@ class NewTransferViewController: UIViewController {
     func showSuccessAlert() {
         ZAlertView(title: "Successful", message: "Paymnet was successful", closeButtonText: "Close") { (view) in
             view.dismiss()
-            self.dismissViewControllerAnimated(true, completion: nil)
+            self.dismiss(animated: true, completion: nil)
         }
         .show()
     }
     
-    func showErrorAlert(title: String, message: String) {
+    func showErrorAlert(_ title: String, message: String) {
         
         let alert = ZAlertView(title: title, message: message, closeButtonText: "Close") { (view) in
             view.dismiss()
             }
-        alert.alertType = ZAlertView.AlertType.Alert
+        alert.alertType = ZAlertView.AlertType.alert
         alert.show()
         
     }
@@ -102,17 +102,17 @@ class NewTransferViewController: UIViewController {
     }
     
     func confirmDismiss() {
-        var refreshAlert = UIAlertController(title: "Cancel Payment", message: "Are you sure you want to cancel this payment?", preferredStyle: UIAlertControllerStyle.Alert)
+        let refreshAlert = UIAlertController(title: "Cancel Payment", message: "Are you sure you want to cancel this payment?", preferredStyle: UIAlertControllerStyle.alert)
         
-        refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
-            self.dismissViewControllerAnimated(true, completion: nil)
+        refreshAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+            self.dismiss(animated: true, completion: nil)
         }))
         
-        refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { (action: UIAlertAction!) in
+        refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
             
         }))
         
-        presentViewController(refreshAlert, animated: true, completion: nil)
+        present(refreshAlert, animated: true, completion: nil)
     }
     
     override func didReceiveMemoryWarning() {
@@ -125,7 +125,7 @@ class NewTransferViewController: UIViewController {
         view.endEditing(true)
     }
     
-    @IBAction func cancelTransferBtnAction(sender: AnyObject) {
+    @IBAction func cancelTransferBtnAction(_ sender: AnyObject) {
         self.confirmDismiss()
     }
 

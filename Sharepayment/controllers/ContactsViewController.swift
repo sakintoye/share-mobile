@@ -37,18 +37,18 @@ class ContactsViewController: UITableViewController, ResourceObserver {
         
         self.navigationItem.title = "Contacts"
         self.navigationItem.leftBarButtonItem = nil // UIBarButtonItem(title: "Left Button", style:   UIBarButtonItemStyle.Plain, target: self, action: nil)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add Contact", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.showMembers(_:)))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add Contact", style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.showMembers(_:)))
         
         contactsResource = SPAPI.contact
         
-        self.refreshControl?.addTarget(self, action: #selector(self.handleRefresh(_:)), forControlEvents: UIControlEvents.ValueChanged)
+        self.refreshControl?.addTarget(self, action: #selector(self.handleRefresh(_:)), for: UIControlEvents.valueChanged)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         contactsResource = SPAPI.contact
     }
     
-    func resourceChanged(resource: Resource, event: ResourceEvent) {
+    func resourceChanged(_ resource: Resource, event: ResourceEvent) {
         if let contacts = contactsResource?.typedContent() as [User]? {
             contactsList = contacts
         }
@@ -59,12 +59,12 @@ class ContactsViewController: UITableViewController, ResourceObserver {
     }
     
     func showMembers(_:UIBarButtonItem) {
-        let vc = storyboard?.instantiateViewControllerWithIdentifier("addMembersViewController") as! AddMembersViewController
+        let vc = storyboard?.instantiateViewController(withIdentifier: "addMembersViewController") as! AddMembersViewController
         let nc = UINavigationController(rootViewController: vc)
-        self.presentViewController(nc, animated: true, completion: nil)
+        self.present(nc, animated: true, completion: nil)
     }
     
-    func handleRefresh(refreshControl: UIRefreshControl) {
+    func handleRefresh(_ refreshControl: UIRefreshControl) {
         contactsResource = SPAPI.contact
     }
 
@@ -75,27 +75,27 @@ class ContactsViewController: UITableViewController, ResourceObserver {
 
     // MARK: - Table view data source
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        self.tableView.cellForRowAtIndexPath(indexPath)?.setSelected(false, animated: true)
-        let vc = storyboard?.instantiateViewControllerWithIdentifier("newTransferViewController") as! NewTransferViewController
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.tableView.cellForRow(at: indexPath)?.setSelected(false, animated: true)
+        let vc = storyboard?.instantiateViewController(withIdentifier: "newTransferViewController") as! NewTransferViewController
         vc.recipient = contactsList[indexPath.row]
         let nc = UINavigationController(rootViewController: vc)
-        self.presentViewController(nc, animated: true, completion: nil)
+        self.present(nc, animated: true, completion: nil)
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return contactsList.count
     }
 
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cellInfo", forIndexPath: indexPath) as! ContactsCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cellInfo", for: indexPath) as! ContactsCell
         let contact = contactsList[indexPath.row]
         cell.name.text = contact.name
         cell.userPhoto.image = UIImage(named: "avatar")

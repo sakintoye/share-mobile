@@ -16,7 +16,7 @@ class TabsController: UITabBarController {
         UITabBar.appearance().tintColor = UIColor(hexString: "#007600")
         let numberOfItems = CGFloat(tabBar.items!.count)
         let tabBarItemSize = CGSize(width: tabBar.frame.width / numberOfItems, height: tabBar.frame.height)
-        tabBar.selectionIndicatorImage = UIImage.imageWithColor(UIColor(hexString: "#b1ffb1")!, size: tabBarItemSize).resizableImageWithCapInsets(UIEdgeInsetsZero)
+        tabBar.selectionIndicatorImage = UIImage.imageWithColor(UIColor(hexString: "#b1ffb1")!, size: tabBarItemSize).resizableImage(withCapInsets: UIEdgeInsets.zero)
         
         
         // remove default border
@@ -27,7 +27,7 @@ class TabsController: UITabBarController {
         
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         
         //        if let items = self.tabBar.items {
         //            for item in items {
@@ -42,12 +42,12 @@ class TabsController: UITabBarController {
 }
 
 extension UIImage {
-    class func imageWithColor(color: UIColor, size: CGSize) -> UIImage {
-        let rect: CGRect = CGRectMake(0, 0, size.width, size.height)
+    class func imageWithColor(_ color: UIColor, size: CGSize) -> UIImage {
+        let rect: CGRect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         UIGraphicsBeginImageContextWithOptions(size, false, 0)
         color.setFill()
         UIRectFill(rect)
-        let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
+        let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         return image
     }

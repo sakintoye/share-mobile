@@ -35,7 +35,7 @@ class SettingsViewController: UITableViewController {
         
     }
     
-    private struct Tags {
+    fileprivate struct Tags {
         struct UserProfile {
             static let Info = "info"
             static let Categories = "categories"
@@ -98,18 +98,18 @@ class SettingsViewController: UITableViewController {
         
     }
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return self.sections.count
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let sectionInfo = self.sections[section]
         return sectionInfo.items.count
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let row = self.sections[indexPath.section].items[indexPath.row]
-        tableView.cellForRowAtIndexPath(indexPath)?.setSelected(false, animated: true)
+        tableView.cellForRow(at: indexPath)?.setSelected(false, animated: true)
         switch row.type {
         case .About:
             showAboutView()
@@ -127,45 +127,45 @@ class SettingsViewController: UITableViewController {
         }
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier("cell")!
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "cell")!
         let row = self.sections[indexPath.section].items[indexPath.row]
         
         cell.textLabel?.text = row.name
-        cell.accessoryType = .DisclosureIndicator
+        cell.accessoryType = .disclosureIndicator
         if row.type == .Logout {
-            cell.accessoryType = .None
-            cell.textLabel?.textColor = UIColor.redColor()
+            cell.accessoryType = .none
+            cell.textLabel?.textColor = UIColor.red
         }
         return cell
     }
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         let sectionInfo = self.sections[section]
         return sectionInfo.title
     }
     
     func doLogOut() {
-        let alertController = UIAlertController(title: AppUser.name, message: "Do you want to sign out of \(AppConfig.name)?", preferredStyle: UIAlertControllerStyle.ActionSheet)
+        let alertController = UIAlertController(title: AppUser.name, message: "Do you want to sign out of \(AppConfig.name)?", preferredStyle: UIAlertControllerStyle.actionSheet)
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: {(alert :UIAlertAction!) in
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {(alert :UIAlertAction!) in
             //DO nothing
         })
         alertController.addAction(cancelAction)
         
-        let okAction = UIAlertAction(title: "Yes", style: UIAlertActionStyle.Default, handler: {(alert :UIAlertAction!) in
+        let okAction = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: {(alert :UIAlertAction!) in
             //Sign out user
             self.logUserOut()
         })
         alertController.addAction(okAction)
         
-        presentViewController(alertController, animated: true, completion: nil)
+        present(alertController, animated: true, completion: nil)
     }
     
     func logUserOut() {
         AppUser.logout()
-        let vc = storyboard!.instantiateViewControllerWithIdentifier("loginViewController")
-        self.presentViewController(vc, animated: true, completion: nil)
+        let vc = storyboard!.instantiateViewController(withIdentifier: "loginViewController")
+        self.present(vc, animated: true, completion: nil)
     }
     
     func showAboutView() {
@@ -180,7 +180,7 @@ class SettingsViewController: UITableViewController {
 //        self.navigationController?.pushViewController(vc, animated: true)
     }
     
-    func showSubscriptionView(row: SettingMenuItem) {
+    func showSubscriptionView(_ row: SettingMenuItem) {
         switch row.tag {
         case Tags.Subscription.Manage:
 //            let vc = storyboard!.instantiateViewControllerWithIdentifier("stripeStepOneVC") as! StripeStepOneVC

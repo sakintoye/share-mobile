@@ -16,7 +16,7 @@ struct User {
     init(json: JSON) {
         id      = json["id"].intValue
         email   = json["email"].stringValue
-        name    = json["name"].stringValue.capitalizedString
+        name    = json["name"].stringValue.capitalized
         print(json)
     }
 }

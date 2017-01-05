@@ -11,7 +11,7 @@ import Stripe
 class StripeAPIClient: NSObject, STPBackendAPIAdapter {
     
     static let sharedClient = StripeAPIClient()
-    let session: NSURLSession
+    let session: URLSession
     var baseURLString: String? = "https://api.payment.akintoye.me/"
     var customerID: String? = nil
     var defaultSource: STPCard? = nil
@@ -19,22 +19,21 @@ class StripeAPIClient: NSObject, STPBackendAPIAdapter {
     let backendURI = "stripe"
     
     override init() {
-        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 5
-        self.session = NSURLSession(configuration: configuration)
+        self.session = URLSession(configuration: configuration)
         super.init()
     }
     
-    func decodeResponse(response: NSURLResponse?, error: NSError?) -> NSError? {
-        if let httpResponse = response as? NSHTTPURLResponse
-            where httpResponse.statusCode != 200 {
+    func decodeResponse(_ response: URLResponse?, error: NSError?) -> NSError? {
+        if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
             return error ?? NSError.networkingError(httpResponse.statusCode)
         }
         return error
     }
     
-    func completeCharge(result: STPToken, amount: Double, recipient_id: Int, completion: STPErrorBlock) {
-        guard let baseURLString = baseURLString, baseURL = NSURL(string: baseURLString) else {
+    func completeCharge(_ result: STPToken, amount: Double, recipient_id: Int, completion: @escaping STPErrorBlock) {
+        guard let baseURLString = baseURLString, let baseURL = URL(string: baseURLString) else {
             let error = NSError(domain: StripeDomain, code: 50, userInfo: [
                 NSLocalizedDescriptionKey: "Please set baseURLString to your backend URL in CheckoutViewController.swift"
                 ])
@@ -49,45 +48,45 @@ class StripeAPIClient: NSObject, STPBackendAPIAdapter {
             return
         }
         let path = "\(backendURI)/charge_card"
-        let url = baseURL.URLByAppendingPathComponent(path)
+        let url = baseURL.appendingPathComponent(path)
         let params: [String: AnyObject] = [
-            "stripe_token": result.stripeID,
+            "stripe_token": result.stripeID as AnyObject,
             "amount": amount * 100,
             "recipient_id": recipient_id,
             "customer_id": customerID
         ]
-        let request = NSURLRequest.request(url, method: .POST, params: params)
-        let task = self.session.dataTaskWithRequest(request) { (data, urlResponse, error) in
-            dispatch_async(dispatch_get_main_queue()) {
+        let request = URLRequest.request(url, method: .POST, params: params)
+        let task = self.session.dataTask(with: request, completionHandler: { (data, urlResponse, error) in
+            DispatchQueue.main.async {
                 if let error = self.decodeResponse(urlResponse, error: error) {
                     completion(error)
                     return
                 }
                 completion(nil)
             }
-        }
+        }) 
         task.resume()
     }
     
-    @objc func retrieveCustomer(completion: STPCustomerCompletionBlock) {
-        guard let key = Stripe.defaultPublishableKey() where !key.containsString("#") else {
+    @objc func retrieveCustomer(_ completion: @escaping STPCustomerCompletionBlock) {
+        guard let key = Stripe.defaultPublishableKey(), !key.contains("#") else {
             let error = NSError(domain: StripeDomain, code: 50, userInfo: [
                 NSLocalizedDescriptionKey: "Please set stripePublishableKey to your account's test publishable key in CheckoutViewController.swift"
                 ])
             completion(nil, error)
             return
         }
-        guard let baseURLString = baseURLString, baseURL = NSURL(string: baseURLString), customerID = customerID else {
+        guard let baseURLString = baseURLString, let baseURL = URL(string: baseURLString), let customerID = customerID else {
             // This code is just for demo purposes - in this case, if the example app isn't properly configured, we'll return a fake customer just so the app works.
             let customer = STPCustomer(stripeID: "cus_test", defaultSource: self.defaultSource, sources: self.sources)
             completion(customer, nil)
             return
         }
         let path = "\(backendURI)\(customerID)"
-        let url = baseURL.URLByAppendingPathComponent(path)
-        let request = NSURLRequest.request(url, method: .GET, params: [:])
-        let task = self.session.dataTaskWithRequest(request) { (data, urlResponse, error) in
-            dispatch_async(dispatch_get_main_queue()) {
+        let url = baseURL.appendingPathComponent(path)
+        let request = URLRequest.request(url, method: .GET, params: [:])
+        let task = self.session.dataTask(with: request, completionHandler: { (data, urlResponse, error) in
+            DispatchQueue.main.async {
                 let deserializer = STPCustomerDeserializer(data: data, urlResponse: urlResponse, error: error)
                 if let error = deserializer.error {
                     completion(nil, error)
@@ -96,12 +95,12 @@ class StripeAPIClient: NSObject, STPBackendAPIAdapter {
                     completion(customer, nil)
                 }
             }
-        }
+        }) 
         task.resume()
     }
     
-    @objc func selectDefaultCustomerSource(source: STPSource, completion: STPErrorBlock) {
-        guard let baseURLString = baseURLString, baseURL = NSURL(string: baseURLString), customerID = customerID else {
+    @objc func selectDefaultCustomerSource(_ source: STPSource, completion: @escaping STPErrorBlock) {
+        guard let baseURLString = baseURLString, let baseURL = URL(string: baseURLString), let customerID = customerID else {
             if let token = source as? STPToken {
                 self.defaultSource = token.card
             }
@@ -109,27 +108,27 @@ class StripeAPIClient: NSObject, STPBackendAPIAdapter {
             return
         }
         let path = "\(backendURI)\(customerID)/select_source"
-        let url = baseURL.URLByAppendingPathComponent(path)
+        let url = baseURL.appendingPathComponent(path)
         let params = [
             "customer_id": customerID,
             "source": source.stripeID,
             ]
-        let request = NSURLRequest.request(url, method: .POST, params: params)
-        let task = self.session.dataTaskWithRequest(request) { (data, urlResponse, error) in
-            dispatch_async(dispatch_get_main_queue()) {
+        let request = URLRequest.request(url, method: .POST, params: params)
+        let task = self.session.dataTask(with: request, completionHandler: { (data, urlResponse, error) in
+            DispatchQueue.main.async {
                 if let error = self.decodeResponse(urlResponse, error: error) {
                     completion(error)
                     return
                 }
                 completion(nil)
             }
-        }
+        }) 
         task.resume()
     }
     
-    @objc func attachSourceToCustomer(source: STPSource, completion: STPErrorBlock) {
-        guard let baseURLString = baseURLString, baseURL = NSURL(string: baseURLString), customerID = customerID else {
-            if let token = source as? STPToken, card = token.card {
+    @objc func attachSource(toCustomer source: STPSource, completion: @escaping STPErrorBlock) {
+        guard let baseURLString = baseURLString, let baseURL = URL(string: baseURLString), let customerID = customerID else {
+            if let token = source as? STPToken, let card = token.card {
                 self.sources.append(card)
                 self.defaultSource = card
             }
@@ -137,27 +136,27 @@ class StripeAPIClient: NSObject, STPBackendAPIAdapter {
             return
         }
         let path = "\(backendURI)/customer/sources"
-        let url = baseURL.URLByAppendingPathComponent(path)
+        let url = baseURL.appendingPathComponent(path)
         let params = [
             "customer_id": customerID,
             "source": source.stripeID,
             ]
-        let request = NSURLRequest.request(url, method: .POST, params: params)
-        let task = self.session.dataTaskWithRequest(request) { (data, urlResponse, error) in
-            dispatch_async(dispatch_get_main_queue()) {
+        let request = URLRequest.request(url, method: .POST, params: params)
+        let task = self.session.dataTask(with: request, completionHandler: { (data, urlResponse, error) in
+            DispatchQueue.main.async {
                 if let error = self.decodeResponse(urlResponse, error: error) {
                     completion(error)
                     return
                 }
                 completion(nil)
             }
-        }
+        }) 
         task.resume()
     }
     
-    @objc func subscribeCustomer(source: STPSource, plan: String, completion: STPErrorBlock) {
-        guard let baseURLString = baseURLString, baseURL = NSURL(string: baseURLString), customerID = customerID else {
-            if let token = source as? STPToken, card = token.card {
+    @objc func subscribeCustomer(_ source: STPSource, plan: String, completion: @escaping STPErrorBlock) {
+        guard let baseURLString = baseURLString, let baseURL = URL(string: baseURLString), let customerID = customerID else {
+            if let token = source as? STPToken, let card = token.card {
                 self.sources.append(card)
                 self.defaultSource = card
             }
@@ -165,22 +164,22 @@ class StripeAPIClient: NSObject, STPBackendAPIAdapter {
             return
         }
         let path = "\(backendURI)subscriptions"
-        let url = baseURL.URLByAppendingPathComponent(path)
+        let url = baseURL.appendingPathComponent(path)
         let params = [
             "customer_id": customerID,
             "plan": plan,
             "stripe_token": source.stripeID,
             ]
-        let request = NSURLRequest.request(url, method: .POST, params: params)
-        let task = self.session.dataTaskWithRequest(request) { (data, urlResponse, error) in
-            dispatch_async(dispatch_get_main_queue()) {
+        let request = URLRequest.request(url, method: .POST, params: params)
+        let task = self.session.dataTask(with: request, completionHandler: { (data, urlResponse, error) in
+            DispatchQueue.main.async {
                 if let error = self.decodeResponse(urlResponse, error: error) {
                     completion(error)
                     return
                 }
                 completion(nil)
             }
-        }
+        }) 
         task.resume()
     }
     

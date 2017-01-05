@@ -84,12 +84,12 @@ class SharePaymentAPI: Service {
     
     // MARK: Authentication
     
-    func logIn(username: String, password: String) -> Request {
+    func logIn(_ username: String, password: String) -> Request {
         return self.resource("auth/sign_in")
             .request(.POST, json: ["email": username, "password": password])
     }
     
-    func signUp(fullname: String, email: String, password: String, confirm_password: String) -> Request {
+    func signUp(_ fullname: String, email: String, password: String, confirm_password: String) -> Request {
         return self.resource("auth")
             .request(.POST, json: ["name": fullname, "email": email, "password": password, "confirm_password": confirm_password])
     }
@@ -102,7 +102,7 @@ class SharePaymentAPI: Service {
         return basicAuthHeader != nil
     }
     
-    private var basicAuthHeader: String? {
+    fileprivate var basicAuthHeader: String? {
         didSet {
             // These two calls are almost always necessary when you have changing auth for your API:
             

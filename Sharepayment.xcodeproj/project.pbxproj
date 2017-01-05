@@ -406,13 +406,16 @@
 					14C06A9E1DAED56F00295A39 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = E47MQB2PZC;
+						LastSwiftMigration = 0820;
 					};
 					14C06AB21DAED56F00295A39 = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0820;
 						TestTargetID = 14C06A9E1DAED56F00295A39;
 					};
 					14C06ABD1DAED56F00295A39 = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0820;
 						TestTargetID = 14C06A9E1DAED56F00295A39;
 					};
 				};
@@ -695,6 +698,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.fit.edu.Sharepayment;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -710,6 +714,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.fit.edu.Sharepayment;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -721,6 +726,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fit.edu.SharepaymentTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sharepayment.app/Sharepayment";
 			};
 			name = Debug;
@@ -733,6 +739,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fit.edu.SharepaymentTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sharepayment.app/Sharepayment";
 			};
 			name = Release;
@@ -744,6 +751,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fit.edu.SharepaymentUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = Sharepayment;
 			};
 			name = Debug;
@@ -755,6 +763,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fit.edu.SharepaymentUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = Sharepayment;
 			};
 			name = Release;
